@@ -5,15 +5,15 @@ class Barchart {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, _data, _map, _xLabel) {
+  constructor(_config, _data, _map, _xLabel, _lMar) {
     // Configuration object with defaults
     // Important: depending on your vis and the type of interactivity you need
     // you might want to use getter and setter methods for individual attributes
     this.config = {
       parentElement: _config.parentElement,
-      containerWidth: _config.containerWidth || 200,
-      containerHeight: _config.containerHeight || 400,
-      margin: _config.margin || {top: 20, right: 5, bottom: 20, left: 50}
+      containerWidth: _config.containerWidth || 500,
+      containerHeight: _config.containerHeight || 250,
+      margin: _config.margin || {top: 20, right: 10, bottom: 20, left: _lMar}
     }
     this.data = _data;
     this.num_map = _map;
@@ -43,21 +43,19 @@ class Barchart {
     vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom - 40;
 
     // Initialize scales
-    vis.xScale = d3.scaleBand()
-        .range([0, vis.width])
+    vis.xScale = d3.scaleLinear()
+        .range([0, vis.width]);
+
+    vis.yScale = d3.scaleBand()
+        .range([vis.height, 0])
         .paddingInner(0.2)
         .paddingOuter(0.2);
 
-    vis.yScale = d3.scaleLinear()
-        .range([vis.height, 0]);
-
     // Initialize axes
     vis.xAxis = d3.axisBottom(vis.xScale)
-        // .ticks(4)
-        // .tickSizeOuter(0);
+        .ticks(6)
 
     vis.yAxis = d3.axisLeft(vis.yScale)
-        // .tickSizeOuter(0);
 
     // Define size of SVG drawing area
     vis.svg = d3.select(vis.config.parentElement)
@@ -95,26 +93,26 @@ class Barchart {
     //     .attr("transform", "rotate(-90)")
     //     .text("life expectancy (years)");
     
-    // vis.chart.append('text')
-    //     .attr('class', 'title')
-    //     .attr('x', vis.width / 2)
-    //     .attr('y', vis.config.margin.top / 40)
-    //     .attr('text-anchor', 'middle')
-    //     .text('Number of Stars in System');
     vis.chart.append('text')
-        .attr('class', 'axis-title')
-        .attr('y', vis.height + 20)
-        .attr('x', vis.width - 20)
-        .attr('dy', '.71em')
-        .style('text-anchor', 'end')
-        .text(`Number of ${vis.xLabel}`);
+        .attr('class', 'title')
+        .attr('x', vis.width / 2)
+        .attr('y', vis.config.margin.top / 40)
+        .attr('text-anchor', 'middle')
+        .text(`${vis.xLabel}`);
+    // vis.chart.append('text')
+    //     .attr('class', 'axis-title')
+    //     .attr('y', vis.height + 20)
+    //     .attr('x', vis.width - 20)
+    //     .attr('dy', '.71em')
+    //     .style('text-anchor', 'end')
+    //     .text(`Number of ${vis.xLabel}`);
 
-    vis.svg.append('text')
-        .attr('class', 'axis-title')
-        .attr('x', 2)
-        .attr('y', 2)
-        .attr('dy', '.71em')
-        .text('Exoplanets');
+    // vis.svg.append('text')
+    //     .attr('class', 'axis-title')
+    //     .attr('x', 2)
+    //     .attr('y', 2)
+    //     .attr('dy', '.71em')
+    //     .text('Exoplanets');
   }
 
   /**
@@ -127,12 +125,13 @@ class Barchart {
     vis.data.reverse();
 
     // Specificy x- and y-accessor functions
-    vis.yValue = d => vis.num_map.get(d.sy_snum)
-    vis.xValue = d => d.sy_snum;
+    vis.xValue = d => d[1];
+    vis.yValue = d => d[0];
 
     // Set the scale input domains
-    vis.yScale.domain([0, d3.max(vis.data, vis.yValue)]);
-    vis.xScale.domain(vis.data.map(vis.xValue));
+    vis.yScale.domain(vis.num_map.keys());
+    vis.xScale.domain([0, d3.max(vis.num_map, vis.xValue)]);
+    // vis.yScale.domain(vis.data.map(vis.yValue));
 
     vis.renderVis();
   }
@@ -148,13 +147,13 @@ class Barchart {
 
     // Add rectangles
     vis.chart.selectAll('.bar')
-        .data(vis.data)
+        .data(vis.num_map)
         .enter()
       .append('rect')
         .attr('class', 'bar')
-        .attr('height', d => vis.height - vis.yScale(vis.yValue(d)))
-        .attr('width', vis.xScale.bandwidth())
-        .attr('x', d => vis.xScale(vis.xValue(d)))
+        .attr('height', vis.yScale.bandwidth())
+        .attr('width', d => vis.xScale(vis.xValue(d)))
+        .attr('x', 0)
         .attr('y', d => vis.yScale(vis.yValue(d)));
     
     // Update the axes because the underlying scales might have changed
