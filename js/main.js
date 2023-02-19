@@ -4,10 +4,16 @@
 d3.csv('data/exoplanets-1.csv')
   .then(data => {
 
+    var dist = [];
     // Convert sales strings to numbers
     data.forEach(d => {
       d.sy_snum = +d.sy_snum;
       d.sy_pnum = +d.sy_pnum;
+      d.sy_dist = +d.sy_dist;
+      d.st_rad = +d.st_rad;
+      d.st_mass = +d.st_mass;
+
+      dist.push(d.sy_dist)
 
     });
 
@@ -115,5 +121,17 @@ d3.csv('data/exoplanets-1.csv')
     method_bar.updateVis();
     type_bar.updateVis();
     hab_bar.updateVis();
+
+    const hist = new Histogram( { parentElement: '#hist'}, data, dist, "Habitable", 80)
+    hist.updateVis();
+
+    const year_map = d3.rollup(data, v => v.length, d => d.disc_year);
+    const year_map_sorted = new Map([...year_map.entries()].sort());
+    const line = new LineChart( { parentElement: '#line'}, year_map_sorted)
+    line.updateVis();
+
+    const scat = new Scatterplot( { parentElement: '#scat'}, data);
+    scat.updateVis();
+
   })
   .catch(error => console.error(error));

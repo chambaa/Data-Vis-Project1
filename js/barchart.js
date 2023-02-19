@@ -40,7 +40,7 @@ class Barchart {
     // You need to adjust the margin config depending on the types of axis tick labels
     // and the position of axis titles (margin convetion: https://bl.ocks.org/mbostock/3019563)
     vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
-    vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom - 40;
+    vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom - 30;
 
     // Initialize scales
     vis.xScale = d3.scaleLinear()
@@ -154,7 +154,8 @@ class Barchart {
         .attr('height', vis.yScale.bandwidth())
         .attr('width', d => vis.xScale(vis.xValue(d)))
         .attr('x', 0)
-        .attr('y', d => vis.yScale(vis.yValue(d)));
+        .attr('y', d => vis.yScale(vis.yValue(d)))
+        .style("fill", "steelblue");
     
     // Update the axes because the underlying scales might have changed
     vis.xAxisG.call(vis.xAxis);
