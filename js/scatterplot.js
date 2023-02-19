@@ -11,9 +11,9 @@ class Scatterplot {
       // you might want to use getter and setter methods for individual attributes
       this.config = {
         parentElement: _config.parentElement,
-        containerWidth: _config.containerWidth || 650,
+        containerWidth: _config.containerWidth || 500,
         containerHeight: _config.containerHeight || 300,
-        margin: _config.margin || {top: 25, right: 20, bottom: 20, left: 35}
+        margin: _config.margin || {top: 25, right: 20, bottom: 50, left: 80}
       }
       this.data = _data;
       this.initVis();
@@ -78,22 +78,20 @@ class Scatterplot {
       // Append y-axis group
       vis.yAxisG = vis.chart.append('g')
           .attr('class', 'axis y-axis');
-  
-      // Append both axis titles
-      vis.chart.append('text')
-          .attr('class', 'axis-title')
-          .attr('y', vis.height - 15)
-          .attr('x', vis.width + 10)
-          .attr('dy', '.71em')
-          .style('text-anchor', 'end')
-          .text('Radius');
-  
-      vis.svg.append('text')
-          .attr('class', 'axis-title')
-          .attr('x', 0)
-          .attr('y', 0)
-          .attr('dy', '.71em')
-          .text('Mass');
+
+      vis.chart.append("text")
+      .attr("class", "xlabel")
+      .attr("text-anchor", "middle")
+      .attr("x",vis. width/2)
+      .attr("y", vis.height + 40)
+      .text("Radius");
+
+    vis.chart.append("text")
+      .attr('class', 'ylabel')
+      .text("Mass")
+      .attr('transform', 'rotate(-90)')
+      .attr('x', -((vis.height + vis.config.margin.top + vis.config.margin.bottom ) / 2))
+      .attr('y', -30) // Relative to the y axis.
     }
   
     /**
@@ -106,7 +104,7 @@ class Scatterplot {
       
       // Specificy accessor functions
       vis.colorValue = d => d.st_spectype.charAt(0);
-      vis.xValue = d => d.st_rad;
+      vis.xValue = d => d.st_rad > 0 ? d.st_rad : 0.1;
       vis.yValue = d => d.st_mass;
   
       // Set the scale input domains

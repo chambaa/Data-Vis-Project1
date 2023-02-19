@@ -5,6 +5,7 @@ d3.csv('data/exoplanets-1.csv')
   .then(data => {
 
     var dist = [];
+    var testTable = [];
     // Convert sales strings to numbers
     data.forEach(d => {
       d.sy_snum = +d.sy_snum;
@@ -12,8 +13,18 @@ d3.csv('data/exoplanets-1.csv')
       d.sy_dist = +d.sy_dist;
       d.st_rad = +d.st_rad;
       d.st_mass = +d.st_mass;
+      d.disc_year = +d.disc_year;
 
       dist.push(d.sy_dist)
+
+      var ob = {
+        "Name": d.pl_name,
+        "Radius": d.st_rad,
+        "Mass": d.st_mass,
+        "Discovery Year": d.disc_year
+
+      }
+      testTable.push(ob);
 
     });
 
@@ -109,11 +120,11 @@ d3.csv('data/exoplanets-1.csv')
 
     
     // Initialize chart
-    const star_bar = new Barchart({ parentElement: '#starBar'}, data, snum_map, "Stars", 50);
-    const planet_bar = new Barchart({ parentElement: '#planetBar'}, data, pnum_map, "Planets", 50);
-    const method_bar = new Barchart({ parentElement: '#methodBar'}, data, method_map, "Methods", 150);
-    const type_bar = new Barchart({ parentElement: '#typeBar'}, data, type_map, "Type", 80);
-    const hab_bar = new Barchart({ parentElement: '#habBar'}, data, hab_map, "Habitable", 80);
+    const star_bar = new Barchart({ parentElement: '#starBar'}, data, snum_map, "Stars in System", 80, "Number of Stars");
+    const planet_bar = new Barchart({ parentElement: '#planetBar'}, data, pnum_map, "Planets in System", 80, "Number of Planets");
+    const method_bar = new Barchart({ parentElement: '#methodBar'}, data, method_map, "Discovery Method", 150, "");
+    const type_bar = new Barchart({ parentElement: '#typeBar'}, data, type_map, "Star Type", 80, "Star Type");
+    const hab_bar = new Barchart({ parentElement: '#habBar'}, data, hab_map, "Habitable Zone", 80, "");
     
     // Show chart
     star_bar.updateVis();
@@ -132,6 +143,8 @@ d3.csv('data/exoplanets-1.csv')
 
     const scat = new Scatterplot( { parentElement: '#scat'}, data);
     scat.updateVis();
+
+    tabulate(testTable, ["Name", "Radius", "Mass", "Discovery Year"]);
 
   })
   .catch(error => console.error(error));

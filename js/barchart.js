@@ -5,7 +5,7 @@ class Barchart {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, _data, _map, _xLabel, _lMar) {
+  constructor(_config, _data, _map, _title, _lMar, _yAxisLabel) {
     // Configuration object with defaults
     // Important: depending on your vis and the type of interactivity you need
     // you might want to use getter and setter methods for individual attributes
@@ -17,7 +17,10 @@ class Barchart {
     }
     this.data = _data;
     this.num_map = _map;
-    this.xLabel = _xLabel
+    this.title = _title;
+    this.yAxisLabel = _yAxisLabel;
+    this.yAxis = this.yAxisLabel != "" ? true : false;
+
 
     this.initVis();
   }
@@ -78,41 +81,28 @@ class Barchart {
 
     // Append titles, legends and other static elements here
     // ...
-    // vis.chart.append("text")
-    //     .attr("class", "x label")
-    //     .attr("text-anchor", "end")
-    //     .attr("x",vis. width)
-    //     .attr("y", vis.height + 40)
-    //     .text("Number of Stars");
+    vis.chart.append("text")
+        .attr("class", "xlabel")
+        .attr("text-anchor", "middle")
+        .attr("x",vis.width/2)
+        .attr("y", vis.height + 35)
+        .text("Exoplanets");
 
-    // vis.chart.append("text")
-    //     .attr("class", "y label")
-    //     .attr("text-anchor", "end")
-    //     .attr("y", 6)
-    //     .attr("dy", ".75em")
-    //     .attr("transform", "rotate(-90)")
-    //     .text("life expectancy (years)");
+    if(vis.yAxis) {
+      vis.chart.append("text")
+        .attr('class', 'ylabel')
+        .text(`${vis.yAxisLabel}`)
+        .attr('transform', 'rotate(-90)')
+        .attr('x', -((vis.height + vis.config.margin.top + vis.config.margin.bottom + 50) / 2))
+        .attr('y', -30) // Relative to the y axis.
+    }
     
     vis.chart.append('text')
         .attr('class', 'title')
         .attr('x', vis.width / 2)
         .attr('y', vis.config.margin.top / 40)
         .attr('text-anchor', 'middle')
-        .text(`${vis.xLabel}`);
-    // vis.chart.append('text')
-    //     .attr('class', 'axis-title')
-    //     .attr('y', vis.height + 20)
-    //     .attr('x', vis.width - 20)
-    //     .attr('dy', '.71em')
-    //     .style('text-anchor', 'end')
-    //     .text(`Number of ${vis.xLabel}`);
-
-    // vis.svg.append('text')
-    //     .attr('class', 'axis-title')
-    //     .attr('x', 2)
-    //     .attr('y', 2)
-    //     .attr('dy', '.71em')
-    //     .text('Exoplanets');
+        .text(`${vis.title}`);
   }
 
   /**

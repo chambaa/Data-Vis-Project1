@@ -13,7 +13,7 @@ class Histogram {
         parentElement: _config.parentElement,
         containerWidth: _config.containerWidth || 550,
         containerHeight: _config.containerHeight || 250,
-        margin: _config.margin || {top: 10, right: 30, bottom: 20, left: 100}
+        margin: _config.margin || {top: 20, right: 30, bottom: 50, left: 80}
       }
       this.data = _data;
       this.num_map = _map;
@@ -37,7 +37,7 @@ class Histogram {
       // You need to adjust the margin config depending on the types of axis tick labels
       // and the position of axis titles (margin convetion: https://bl.ocks.org/mbostock/3019563)
       vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right,
-      vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom - 30;
+      vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
 
       // Define size of SVG drawing area
       vis.svg = d3.select(vis.config.parentElement)
@@ -73,8 +73,27 @@ class Histogram {
         
         vis.yAxisG = vis.chart.append("g")
             .call(d3.axisLeft(vis.yScale));
-  
-      
+        
+        vis.chart.append('text')
+          .attr('class', 'title')
+          .attr('x', vis.width / 2)
+          .attr('y', vis.config.margin.top / 40)
+          .attr('text-anchor', 'middle')
+          .text("Distance from Earth");
+
+        vis.chart.append("text")
+          .attr("class", "xlabel")
+          .attr("text-anchor", "middle")
+          .attr("x",vis. width/2)
+          .attr("y", vis.height + 40)
+          .text("Distance (pc)");
+
+        vis.chart.append("text")
+          .attr('class', 'ylabel')
+          .text("Exoplanents")
+          .attr('transform', 'rotate(-90)')
+          .attr('x', -((vis.height + vis.config.margin.top + vis.config.margin.bottom + 50) / 2))
+          .attr('y', -40) // Relative to the y axis.
     }
   
     /**

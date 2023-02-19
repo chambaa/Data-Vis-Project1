@@ -1,1 +1,44 @@
-.inGreen { color: green; }
+#tab {
+    margin-left: 50px;
+    margin-right: 20px;
+}
+
+.scrollTable { 
+    border-collapse: collapse; 
+    color: #333; 
+    background-color: #F7F6F3; 
+    border: 1px solid #333;
+}
+
+.scrollTable th, .scrollTable td {
+    width: 120px;
+}
+
+.scrollTable tbody tr:hover { 
+    background-color: steelblue; 
+}
+
+.scrollTable thead {
+    display: block;
+    font-weight: bold; 
+    background-color: #CCC; 
+    cursor: default; 
+    width: 500px;
+}
+
+.scrollTable tbody {
+    display: block;
+    height: 250px;
+    overflow: scroll;
+}
+
+.xlabel {
+    fill: #979797;
+}
+.ylabel {
+    fill: #979797;
+}
+
+.title {
+    font-weight: bold;
+}

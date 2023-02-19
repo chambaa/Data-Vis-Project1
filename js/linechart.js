@@ -8,9 +8,9 @@ class LineChart {
     constructor(_config, _data) {
       this.config = {
         parentElement: _config.parentElement,
-        containerWidth: _config.containerWidth || 800,
-        containerHeight: _config.containerHeight || 240,
-        margin: _config.margin || {top: 25, right: 30, bottom: 30, left: 50}
+        containerWidth: _config.containerWidth || 500,
+        containerHeight: _config.containerHeight || 250,
+        margin: _config.margin || {top: 20, right: 30, bottom: 50, left: 80}
       }
       this.data = _data;
       this.initVis();
@@ -81,6 +81,27 @@ class LineChart {
           .attr('r', 4);
   
       vis.tooltip.append('text');
+
+      vis.chart.append('text')
+        .attr('class', 'title')
+        .attr('x', vis.width / 2)
+        .attr('y', vis.config.margin.top / 40)
+        .attr('text-anchor', 'middle')
+        .text("Discoveries over Time");
+
+      vis.chart.append("text")
+        .attr("class", "xlabel")
+        .attr("text-anchor", "middle")
+        .attr("x",vis. width/2)
+        .attr("y", vis.height + 40)
+        .text("Time (years)");
+
+      vis.chart.append("text")
+        .attr('class', 'ylabel')
+        .text("Number of Discoveries")
+        .attr('transform', 'rotate(-90)')
+        .attr('x', -((vis.height + vis.config.margin.top + vis.config.margin.bottom + 90) / 2))
+        .attr('y', -50) // Relative to the y axis.
     }
   
     /**
