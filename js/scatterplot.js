@@ -11,9 +11,9 @@ class Scatterplot {
       // you might want to use getter and setter methods for individual attributes
       this.config = {
         parentElement: _config.parentElement,
-        containerWidth: _config.containerWidth || 500,
-        containerHeight: _config.containerHeight || 300,
-        margin: _config.margin || {top: 50, right: 20, bottom: 50, left: 80}
+        containerWidth: _config.containerWidth || 600,
+        containerHeight: _config.containerHeight || 250,
+        margin: _config.margin || {top: 50, right: 20, bottom: 50, left: 120}
       }
       this.data = _data;
       this.initVis();
@@ -40,7 +40,7 @@ class Scatterplot {
       vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
   
       // Initialize scales
-      vis.colorScale = d3.scaleOrdinal(d3.schemeTableau10)
+      vis.colorScale = d3.scaleOrdinal().range(["#83B692", "#EEB868", "#D64933", "#7A9CC6", "#8D6A9F", "#525252"])
           .domain(["A", "F", "G", "K", "M" ]);
   
       vis.xScale = d3.scaleLog()
@@ -111,7 +111,7 @@ class Scatterplot {
       
       // Specificy accessor functions
       vis.colorValue = d => d.st_spectype.charAt(0);
-      vis.xValue = d => d.st_rad > 0 ? d.st_rad : 0.1;
+      vis.xValue = d => d.st_rad > 0 ? d.st_rad : 0.000000001;
       vis.yValue = d => d.st_mass;
   
       // Set the scale input domains
@@ -138,6 +138,8 @@ class Scatterplot {
       .style("padding", "15px")
       .style("background", "rgba(0,0,0,0.6)")
       .style("border-radius", "5px")
+      .style("width", "100px")
+      .style("font-size", "12px")
       .style("color", "#fff");
   
       // Add circles
@@ -152,10 +154,12 @@ class Scatterplot {
         //   .attr('fill', "steelblue");
           .attr('fill', d => vis.colorScale(vis.colorValue(d)))
           .on("mouseover", function(d, i) {
-            console.log(d.target.__data__)
-            tooltip.html(`Planet Name: ${d.target.__data__.pl_name}`).style("visibility", "visible");
-            d3.select(this)
-              .attr("fill", "black");
+            console.log(i)
+            tooltip.html(`<div>Name: ${i.pl_name}</div>
+            <div>Mass: ${i.st_mass}</div>
+            <div>Radius: ${i.st_rad}</div>`).style("visibility", "visible");
+            // d3.select(this)
+            //   .attr("fill", "black");
           })
           .on("mousemove", function(){
             tooltip

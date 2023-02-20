@@ -45,6 +45,10 @@ class Barchart {
     vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
     vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom - 30;
 
+    // Color scale for Star Type
+    vis.colorScale = d3.scaleOrdinal().range(["#83B692", "#EEB868", "#D64933", "#7A9CC6", "#8D6A9F", "#525252"])
+    .domain(["A", "F", "G", "K", "M" ]);
+
     // Initialize scales
     vis.xScale = d3.scaleLinear()
         .range([0, vis.width]);
@@ -121,6 +125,7 @@ class Barchart {
     // Set the scale input domains
     vis.yScale.domain(vis.num_map.keys());
     vis.xScale.domain([0, d3.max(vis.num_map, vis.xValue)]);
+    vis.colorValue = d => d[0];
     // vis.yScale.domain(vis.data.map(vis.yValue));
 
     vis.renderVis();
@@ -135,16 +140,21 @@ class Barchart {
     let vis = this;
     vis.data.reverse();
 
+    var tooltipMiddle = vis.title == "Habitable Zone" ? "are in the" : vis.title == "Discovery Method" ? "where discovered by" : "have";
+    var tooltipEnd = vis.title == "Habitable Zone" ? "zone" : vis.title == "Discovery Method" ? "method" : vis.title.toLowerCase();
+    var colorScale = vis.title == "Star Type" ?  d => vis.colorScale(vis.colorValue(d)) : "#525252";
+
     // create tooltip element  
     const tooltip = d3.select("body")
       .append("div")
-      .attr("class","d3-tooltip")
       .style("position", "absolute")
       .style("z-index", "10")
       .style("visibility", "hidden")
       .style("padding", "15px")
       .style("background", "rgba(0,0,0,0.6)")
       .style("border-radius", "5px")
+      .style("width", "100px")
+      .style("font-size", "12px")
       .style("color", "#fff");
 
     // Add rectangles
@@ -157,9 +167,13 @@ class Barchart {
         .attr('width', d => vis.xScale(vis.xValue(d)))
         .attr('x', 0)
         .attr('y', d => vis.yScale(vis.yValue(d)))
-        // .style("fill", "steelblue")
+        .style("fill", colorScale)
         .on("mouseover", function(d, i) {
-          tooltip.html(`Data: ${d.target.__data__[1]}`).style("visibility", "visible");
+          var tooltipLabel = i[0] == "unknown" ? "have <b>unknown</b> star type" : `${tooltipMiddle} <b>${i[0]}</b> ${tooltipEnd}`;
+          if(vis.title == "Habitable Zone" && i[0] == "unknown") {
+            tooltipLabel += " (needed to determine habitable zone)"
+          }
+          tooltip.html(`<b>${i[1]}</b> Exoplanets ` + tooltipLabel).style("visibility", "visible");
           d3.select(this)
             .attr("fill", "steelblue");
         })
@@ -170,7 +184,7 @@ class Barchart {
         })
         .on("mouseout", function() {
           tooltip.html(``).style("visibility", "hidden");
-          d3.select(this).attr("fill", "black");
+          d3.select(this).attr("fill", colorScale);
         });
         // .append('title')
         // .text((d) => `Sales were ${d.sales} in ${d.year}`);

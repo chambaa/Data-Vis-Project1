@@ -15,7 +15,7 @@
 }
 
 .scrollTable tbody tr:hover { 
-    background-color: steelblue; 
+    background-color: #aeaeae; 
 }
 
 .scrollTable thead {
@@ -54,6 +54,16 @@
     margin-left: 500px;
 }
 
+.bar:hover {
+    stroke: gold;
+    stroke-width: 3px;
+}
+
+.point:hover {
+    stroke: gold;
+    stroke-width: 3px;
+  }
+
 /* Tooltip */
 #tooltip {
     position: absolute;
@@ -66,7 +76,7 @@
     padding: 8px;
     min-width: 160px;
     color: #333;
-  }
+}
   .tooltip-title {
     color: #000;
     font-size: 14px;
@@ -77,6 +87,6 @@
     padding-left: 20px;
   }
 
-.bar:hover {
+/* .bar:hover {
   fill: steelblue;
-}
+} */

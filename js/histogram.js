@@ -118,13 +118,14 @@ class Histogram {
       // create tooltip element  
       const tooltip = d3.select("body")
         .append("div")
-        .attr("class","d3-tooltip")
         .style("position", "absolute")
         .style("z-index", "10")
         .style("visibility", "hidden")
         .style("padding", "15px")
         .style("background", "rgba(0,0,0,0.6)")
         .style("border-radius", "5px")
+        .style("width", "100px")
+        .style("font-size", "12px")
         .style("color", "#fff");
 
       // Add rectangles
@@ -133,13 +134,15 @@ class Histogram {
         .enter()
       .append("rect")
         .attr("x", 1)
+        .attr("class", "bar")
         .attr("transform", function(d) { return "translate(" + vis.xScale(d.x0) + "," + vis.yScale(d.length) + ")"; })
         .attr("width", function(d) { return vis.xScale(d.x1) - vis.xScale(d.x0) ; })
         .attr("height", function(d) { return vis.height - vis.yScale(d.length); })
+        .style("fill", "#525252")
         .on("mouseover", function(d, i) {
-          tooltip.html(`Data: ${d.target.__data__[1]}`).style("visibility", "visible");
-          d3.select(this)
-            .attr("fill", "steelblue");
+          tooltip.html(`<b>${i.length}</b> exoplanets are between <b>${Math.min(...i)}</b> and <b>${Math.max(...i)}</b> parsecs from earth`).style("visibility", "visible");
+          // d3.select(this)
+          //   .attr("fill", "steelblue");
         })
         .on("mousemove", function(){
           tooltip
@@ -148,7 +151,7 @@ class Histogram {
         })
         .on("mouseout", function() {
           tooltip.html(``).style("visibility", "hidden");
-          d3.select(this).attr("fill", "black");
+          d3.select(this).attr("fill", "#525252");
         });
         // .style("fill", "steelblue")
     }

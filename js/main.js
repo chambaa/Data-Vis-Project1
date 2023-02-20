@@ -55,7 +55,6 @@ d3.csv('data/exoplanets-1.csv')
     var dist_map = d3.group(data, d => d.st_spectype.charAt(0))
     dist_map.forEach((value, key) => {
         if(!validTypes.includes(key)) {
-            unknown += value;
             dist_map.delete(key);
         }
     })
@@ -116,6 +115,7 @@ d3.csv('data/exoplanets-1.csv')
     const hab_map = new Map();
     hab_map.set("habitable", hab);
     hab_map.set("unhabitable", unhab);
+    hab_map.set("unknown", unknown);
 
 
     

@@ -9,8 +9,8 @@ class LineChart {
       this.config = {
         parentElement: _config.parentElement,
         containerWidth: _config.containerWidth || 500,
-        containerHeight: _config.containerHeight || 250,
-        margin: _config.margin || {top: 20, right: 30, bottom: 50, left: 80}
+        containerHeight: _config.containerHeight || 300,
+        margin: _config.margin || {top: 60, right: 30, bottom: 50, left: 80}
       }
       this.data = _data;
       this.initVis();
