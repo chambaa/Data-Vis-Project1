@@ -13,7 +13,7 @@ class Scatterplot {
         parentElement: _config.parentElement,
         containerWidth: _config.containerWidth || 500,
         containerHeight: _config.containerHeight || 300,
-        margin: _config.margin || {top: 25, right: 20, bottom: 50, left: 80}
+        margin: _config.margin || {top: 50, right: 20, bottom: 50, left: 80}
       }
       this.data = _data;
       this.initVis();
@@ -80,6 +80,13 @@ class Scatterplot {
           .attr('class', 'axis y-axis');
 
       vis.chart.append("text")
+          .attr("class", "title")
+          .attr("text-anchor", "middle")
+          .attr("x",vis. width/2)
+          .attr("y", -20)
+          .text("Mass vs Radius");
+
+      vis.chart.append("text")
       .attr("class", "xlabel")
       .attr("text-anchor", "middle")
       .attr("x",vis. width/2)
@@ -120,6 +127,18 @@ class Scatterplot {
      */
     renderVis() {
       let vis = this;
+
+      // create tooltip element  
+      const tooltip = d3.select("body")
+      .append("div")
+      .attr("class","d3-tooltip")
+      .style("position", "absolute")
+      .style("z-index", "10")
+      .style("visibility", "hidden")
+      .style("padding", "15px")
+      .style("background", "rgba(0,0,0,0.6)")
+      .style("border-radius", "5px")
+      .style("color", "#fff");
   
       // Add circles
       vis.chart.selectAll('.point')
@@ -131,7 +150,22 @@ class Scatterplot {
           .attr('cy', d => vis.yScale(vis.yValue(d)))
           .attr('cx', d => vis.xScale(vis.xValue(d)))
         //   .attr('fill', "steelblue");
-          .attr('fill', d => vis.colorScale(vis.colorValue(d)));
+          .attr('fill', d => vis.colorScale(vis.colorValue(d)))
+          .on("mouseover", function(d, i) {
+            console.log(d.target.__data__)
+            tooltip.html(`Planet Name: ${d.target.__data__.pl_name}`).style("visibility", "visible");
+            d3.select(this)
+              .attr("fill", "black");
+          })
+          .on("mousemove", function(){
+            tooltip
+              .style("top", (event.pageY-10)+"px")
+              .style("left",(event.pageX+10)+"px");
+          })
+          .on("mouseout", function() {
+            tooltip.html(``).style("visibility", "hidden");
+            d3.select(this).attr("fill", d => vis.colorScale(vis.colorValue(d)));
+          });
       
       // Update the axes/gridlines
       // We use the second .call() to remove the axis and just show gridlines

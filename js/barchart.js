@@ -135,6 +135,18 @@ class Barchart {
     let vis = this;
     vis.data.reverse();
 
+    // create tooltip element  
+    const tooltip = d3.select("body")
+      .append("div")
+      .attr("class","d3-tooltip")
+      .style("position", "absolute")
+      .style("z-index", "10")
+      .style("visibility", "hidden")
+      .style("padding", "15px")
+      .style("background", "rgba(0,0,0,0.6)")
+      .style("border-radius", "5px")
+      .style("color", "#fff");
+
     // Add rectangles
     vis.chart.selectAll('.bar')
         .data(vis.num_map)
@@ -145,7 +157,23 @@ class Barchart {
         .attr('width', d => vis.xScale(vis.xValue(d)))
         .attr('x', 0)
         .attr('y', d => vis.yScale(vis.yValue(d)))
-        .style("fill", "steelblue");
+        // .style("fill", "steelblue")
+        .on("mouseover", function(d, i) {
+          tooltip.html(`Data: ${d.target.__data__[1]}`).style("visibility", "visible");
+          d3.select(this)
+            .attr("fill", "steelblue");
+        })
+        .on("mousemove", function(){
+          tooltip
+            .style("top", (event.pageY-10)+"px")
+            .style("left",(event.pageX+10)+"px");
+        })
+        .on("mouseout", function() {
+          tooltip.html(``).style("visibility", "hidden");
+          d3.select(this).attr("fill", "black");
+        });
+        // .append('title')
+        // .text((d) => `Sales were ${d.sales} in ${d.year}`);
     
     // Update the axes because the underlying scales might have changed
     vis.xAxisG.call(vis.xAxis);
