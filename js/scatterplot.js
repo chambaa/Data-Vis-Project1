@@ -40,7 +40,7 @@ class Scatterplot {
       vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
   
       // Initialize scales
-      vis.colorScale = d3.scaleOrdinal().range(["#83B692", "#EEB868", "#D64933", "#7A9CC6", "#8D6A9F", "#525252"])
+      vis.colorScale = d3.scaleOrdinal().range(["#83B692", "#fb8500", "#D64933", "#7A9CC6", "#8D6A9F", "#525252"])
           .domain(["A", "F", "G", "K", "M" ]);
   
       vis.xScale = d3.scaleLog()
@@ -143,7 +143,7 @@ class Scatterplot {
       .style("color", "#fff");
   
       // Add circles
-      vis.chart.selectAll('.point')
+      vis.circles = vis.chart.selectAll('.point')
           .data(vis.data)
           .enter()
         .append('circle')

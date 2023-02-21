@@ -46,7 +46,7 @@ class Barchart {
     vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom - 30;
 
     // Color scale for Star Type
-    vis.colorScale = d3.scaleOrdinal().range(["#83B692", "#EEB868", "#D64933", "#7A9CC6", "#8D6A9F", "#525252"])
+    vis.colorScale = d3.scaleOrdinal().range(["#83B692", "#fb8500", "#D64933", "#7A9CC6", "#8D6A9F", "#525252"])
     .domain(["A", "F", "G", "K", "M" ]);
 
     // Initialize scales
@@ -158,7 +158,7 @@ class Barchart {
       .style("color", "#fff");
 
     // Add rectangles
-    vis.chart.selectAll('.bar')
+    vis.bars = vis.chart.selectAll('.bar')
         .data(vis.num_map)
         .enter()
       .append('rect')
@@ -185,6 +185,17 @@ class Barchart {
         .on("mouseout", function() {
           tooltip.html(``).style("visibility", "hidden");
           d3.select(this).attr("fill", colorScale);
+        })
+        .on('click', function(event, d) {
+          const isActive = filter.find(e => e.sy_snum === d[0])
+          if (isActive) {
+            const filterObj = filter.find(e => e.sy_snum === d[0])
+            filter = filter.filter(f => f !== filterObj); // Remove filter
+          } else {
+            filter.push({"sy_snum": d[0]}); // Append filter
+          }
+          filterData(); // Call global function to update scatter plot
+          d3.select(this).classed('active', !isActive); // Add class to style active filters with CSS
         });
         // .append('title')
         // .text((d) => `Sales were ${d.sales} in ${d.year}`);
@@ -192,5 +203,6 @@ class Barchart {
     // Update the axes because the underlying scales might have changed
     vis.xAxisG.call(vis.xAxis);
     vis.yAxisG.call(vis.yAxis);
+    
   }
 }

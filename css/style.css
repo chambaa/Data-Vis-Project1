@@ -43,18 +43,26 @@
     font-weight: bold;
 }
 
-.source {
+.star_source {
     font-size: 10px;
     color: #888;
-    margin-left: 600px;
+    margin-left: 590px;
     margin-bottom: 20px;
 }
 
-.test {
-    margin-left: 500px;
+.disc_source {
+    font-size: 10px;
+    color: #888;
+    margin-left: 1210px;
+    margin-bottom: 20px;
 }
 
 .bar:hover {
+    stroke: gold;
+    stroke-width: 3px;
+}
+
+.bar.active {
     stroke: gold;
     stroke-width: 3px;
 }

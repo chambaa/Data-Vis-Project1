@@ -134,7 +134,7 @@ class Histogram {
         .enter()
       .append("rect")
         .attr("x", 1)
-        .attr("class", "bar")
+        .attr("class", "hist-bar")
         .attr("transform", function(d) { return "translate(" + vis.xScale(d.x0) + "," + vis.yScale(d.length) + ")"; })
         .attr("width", function(d) { return vis.xScale(d.x1) - vis.xScale(d.x0) ; })
         .attr("height", function(d) { return vis.height - vis.yScale(d.length); })
