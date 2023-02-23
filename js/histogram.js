@@ -50,26 +50,31 @@ class Histogram {
         .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
       vis.xScale = d3.scaleLinear()
-        .domain([0, d3.max(vis.num_map, d => d)])     // can use this instead of 1000 to have the max of data: )
+        .domain([0, d3.max(vis.num_map, d => d)])
         .range([0, vis.width]);
 
       vis.xAxisG = vis.chart.append("g")
         .attr("transform", "translate(0," + vis.height + ")")
         .call(d3.axisBottom(vis.xScale));
 
-        // set the parameters for the histogram
-        var histogram = d3.histogram()
-            .value(d => d)   // I need to give the vector of value
-            .domain(vis.xScale.domain())  // then the domain of the graphic
-            .thresholds(vis.xScale.ticks(70)); // then the numbers of bins
+      // set the parameters for the histogram
+      vis.histogram = d3.histogram()
+          .value(d => d)   // I need to give the vector of value
+          .domain(vis.xScale.domain())  // then the domain of the graphic
+          .thresholds(vis.xScale.ticks(70)); // then the numbers of bins
 
         // And apply this function to data to get the bins
-        vis.bins = histogram(vis.num_map);
+        vis.bins = vis.histogram(vis.num_map);
 
         // Y axis: scale and draw:
         vis.yScale = d3.scaleLinear()
             .range([vis.height, 0]);
-            vis.yScale.domain([0, d3.max(vis.bins, function(d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
+            // vis.yScale.domain([0, d3.max(vis.bins, function(d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
+
+        // Initialize axes
+        vis.xAxis = d3.axisBottom(vis.xScale)
+
+        vis.yAxis = d3.axisLeft(vis.yScale)
         
         vis.yAxisG = vis.chart.append("g")
             .call(d3.axisLeft(vis.yScale));
@@ -103,6 +108,11 @@ class Histogram {
      */
     updateVis() {
       let vis = this;
+
+      // And apply this function to data to get the bins
+      vis.bins = vis.histogram(vis.num_map);
+      vis.yScale.domain([0, d3.max(vis.bins, function(d) { return d.length; })]);
+      vis.xScale.domain([0, d3.max(vis.num_map, d => d)]);
   
       vis.renderVis();
     }
@@ -129,7 +139,7 @@ class Histogram {
         .style("color", "#fff");
 
       // Add rectangles
-      vis.chart.selectAll("rect")
+      vis.bars = vis.chart.selectAll("rect")
         .data(vis.bins)
         .enter()
       .append("rect")
@@ -154,5 +164,9 @@ class Histogram {
           d3.select(this).attr("fill", "#525252");
         });
         // .style("fill", "steelblue")
+
+        // Update the axes because the underlying scales might have changed
+        vis.xAxisG.call(vis.xAxis);
+        vis.yAxisG.call(vis.yAxis);
     }
   }

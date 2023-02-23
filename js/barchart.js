@@ -21,7 +21,6 @@ class Barchart {
     this.yAxisLabel = _yAxisLabel;
     this.yAxis = this.yAxisLabel != "" ? true : false;
 
-
     this.initVis();
   }
   
@@ -117,6 +116,7 @@ class Barchart {
   updateVis() {
     let vis = this;
     vis.data.reverse();
+    console.log(vis.title)
 
     // Specificy x- and y-accessor functions
     vis.xValue = d => d[1];
@@ -126,6 +126,7 @@ class Barchart {
     vis.yScale.domain(vis.num_map.keys());
     vis.xScale.domain([0, d3.max(vis.num_map, vis.xValue)]);
     vis.colorValue = d => d[0];
+    vis.class = d => (filter.find(e => e.sy_snum === d[0]) && vis.title === "Stars in System") ? "test" : "bar";
     // vis.yScale.domain(vis.data.map(vis.yValue));
 
     vis.renderVis();
@@ -137,6 +138,8 @@ class Barchart {
    * (i.e., user selects a different year)
    */
   renderVis() {
+    console.log("render")
+
     let vis = this;
     vis.data.reverse();
 
@@ -162,7 +165,7 @@ class Barchart {
         .data(vis.num_map)
         .enter()
       .append('rect')
-        .attr('class', 'bar')
+        .attr('class', d => this.class(d))
         .attr('height', vis.yScale.bandwidth())
         .attr('width', d => vis.xScale(vis.xValue(d)))
         .attr('x', 0)
@@ -174,8 +177,6 @@ class Barchart {
             tooltipLabel += " (needed to determine habitable zone)"
           }
           tooltip.html(`<b>${i[1]}</b> Exoplanets ` + tooltipLabel).style("visibility", "visible");
-          d3.select(this)
-            .attr("fill", "steelblue");
         })
         .on("mousemove", function(){
           tooltip
@@ -185,24 +186,39 @@ class Barchart {
         .on("mouseout", function() {
           tooltip.html(``).style("visibility", "hidden");
           d3.select(this).attr("fill", colorScale);
-        })
-        .on('click', function(event, d) {
-          const isActive = filter.find(e => e.sy_snum === d[0])
-          if (isActive) {
-            const filterObj = filter.find(e => e.sy_snum === d[0])
-            filter = filter.filter(f => f !== filterObj); // Remove filter
-          } else {
-            filter.push({"sy_snum": d[0]}); // Append filter
-          }
-          filterData(); // Call global function to update scatter plot
-          d3.select(this).classed('active', !isActive); // Add class to style active filters with CSS
         });
-        // .append('title')
-        // .text((d) => `Sales were ${d.sales} in ${d.year}`);
+        
+        vis.bars.on('click', function(event, d) {
+          vis.bars.remove();
+          tooltip.html(``).style("visibility", "hidden");
+
+          var isActive = false
+          if(vis.title === "Stars in System") {
+            isActive = filter.find(e => e.sy_snum === d[0])
+            if (isActive) {
+              const filterObj = filter.find(e => e.sy_snum === d[0])
+              filter = filter.filter(f => f !== filterObj); // Remove filter
+            } else {
+              filter.push({"sy_snum": d[0]}); // Append filter
+            }
+            filterData(d3.select(this)); // Call global function to update scatter plot
+            d3.select(this).classed('active', !isActive); // Add class to style active filters with CSS
+          }
+          else if(vis.title === "Planets in System") {
+            isActive = filter.find(e => e.sy_pnum === d[0])
+            if (isActive) {
+              const filterObj = filter.find(e => e.sy_pnum === d[0])
+              filter = filter.filter(f => f !== filterObj); // Remove filter
+            } else {
+              filter.push({"sy_pnum": d[0]}); // Append filter
+            }
+            filterData(); // Call global function to update scatter plot
+            d3.select(this).classed('active', !isActive); // Add class to style active filters with CSS
+          }
+        });
     
     // Update the axes because the underlying scales might have changed
     vis.xAxisG.call(vis.xAxis);
     vis.yAxisG.call(vis.yAxis);
-    
   }
 }

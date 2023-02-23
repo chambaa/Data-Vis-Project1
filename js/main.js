@@ -1,6 +1,8 @@
 let filter = [];
+let tableData = [];
+var dist = [];
 const validTypes = ["A", "F", "G", "K", "M"]
-let data, planet_bar, star_bar, snum_map, pnum_map, type_map, method_map, hab_map, type_bar, method_bar, hab_bar, scat;
+let data, planet_bar, star_bar, snum_map, pnum_map, type_map, method_map, hab_map, type_bar, method_bar, hab_bar, scat, hist, line;
 
 /**
  * Load data from CSV file asynchronously and render bar chart
@@ -9,8 +11,6 @@ d3.csv('data/exoplanets-1.csv')
   .then(_data => {
 
     data = _data;
-    var dist = [];
-    var testTable = [];
     // Convert sales strings to numbers
     data.forEach(d => {
       d.sy_snum = +d.sy_snum;
@@ -29,7 +29,7 @@ d3.csv('data/exoplanets-1.csv')
         "Discovery Year": d.disc_year
 
       }
-      testTable.push(ob);
+      tableData.push(ob);
 
     });
 
@@ -64,43 +64,47 @@ d3.csv('data/exoplanets-1.csv')
     type_bar.updateVis();
     hab_bar.updateVis();
 
-    const hist = new Histogram( { parentElement: '#hist'}, data, dist, "Habitable", 80)
+    hist = new Histogram( { parentElement: '#hist'}, data, dist, "Habitable", 80)
     hist.updateVis();
 
     const year_map = d3.rollup(data, v => v.length, d => d.disc_year);
     const year_map_sorted = new Map([...year_map.entries()].sort());
-    const line = new LineChart( { parentElement: '#line'}, year_map_sorted)
+    line = new LineChart( { parentElement: '#line'}, year_map_sorted)
     line.updateVis();
 
     scat = new Scatterplot( { parentElement: '#scat'}, data);
     scat.updateVis();
 
-    tabulate(testTable, ["Name", "Radius", "Mass", "Discovery Year"]);
+    tabulate(tableData, ["Name", "Radius", "Mass", "Discovery Year"]);
 
   })
   .catch(error => console.error(error));
 
 
-function filterData() {
+function filterData(test) {
     if (filter.length == 0) {
-        // star_bar.num_map = snum_map;
+        star_bar.num_map = snum_map;
         planet_bar.num_map = pnum_map;
         method_bar.num_map = method_map;
         hab_bar.num_map = hab_map;
         type_bar.num_map = type_map;
-        
         scat.data = data;
+        line.data = data;
+        hist.num_map = dist;
+        tabulate(tableData, ["Name", "Radius", "Mass", "Discovery Year"]);
     } else {
         var tempData = [];
         filter.forEach(e => {
             var tempData2 = data.filter(d => e.sy_snum === d.sy_snum);
+            var tempData3 = data.filter(d => e.sy_pnum === d.sy_pnum);
             tempData = tempData.concat(tempData2)
+            tempData = tempData.concat(tempData3)
         });
 
         // Update Stars
-        // var tmp_snum_map = d3.rollup(data, v => v.length, d => d.sy_snum);
-        // tmp_snum_map = new Map([...snum_map.entries()].sort());
-        // star_bar.num_map = tmp_snum_map;
+        var tmp_snum_map = d3.rollup(tempData, v => v.length, d => d.sy_snum);
+        tmp_snum_map = new Map([...tmp_snum_map.entries()].sort());
+        star_bar.num_map = tmp_snum_map;
 
         // Update Planets
         var tmp_pnum_map = d3.rollup(tempData, v => v.length, d => d.sy_pnum);
@@ -108,23 +112,50 @@ function filterData() {
         planet_bar.num_map = tmp_pnum_map;
 
         // Update Discovery method
-        var tmp_method_map = d3.rollup(tempData, v => v.length, d => d.discoverymethod);
-        method_bar.num_map = tmp_method_map;
+        method_bar.num_map = d3.rollup(tempData, v => v.length, d => d.discoverymethod);
 
         // Update Habitable zone
-        var tmp_hab_map = getHabMap(tempData);
-        hab_bar.num_map = tmp_hab_map;
+        hab_bar.num_map = getHabMap(tempData);
 
         // Update star type
-        var tmp_type_map = getStarTypeMap(tempData);
-        type_bar.num_map = tmp_type_map;
+        type_bar.num_map = getStarTypeMap(tempData);
 
         // Update scatterplot
         scat.data = tempData;
+
+        // Update Line
+        const tmp_year_map = d3.rollup(tempData, v => v.length, d => d.disc_year);
+        const tmp_year_map_sorted = new Map([...tmp_year_map.entries()].sort());
+        line.data = tmp_year_map_sorted
+
+        // Update Table
+        var tmpTableData = [];
+        var tmpDist = [];
+        tempData.forEach(d => {
+            d.st_rad = +d.st_rad;
+            d.st_mass = +d.st_mass;
+            d.disc_year = +d.disc_year;
+            d.sy_dist = +d.sy_dist;
+       
+            var ob = {
+              "Name": d.pl_name,
+              "Radius": d.st_rad,
+              "Mass": d.st_mass,
+              "Discovery Year": d.disc_year
+      
+            }
+            tmpTableData.push(ob);
+
+            tmpDist.push(d.sy_dist)
+        });
+        tabulate(tmpTableData, ["Name", "Radius", "Mass", "Discovery Year"]);
+
+        // Update Hist
+        hist.num_map = tmpDist;
     }
 
-    // star_bar.bars.remove();
-    // star_bar.updateVis();
+    star_bar.bars.remove();
+    star_bar.updateVis();
 
     planet_bar.bars.remove();
     planet_bar.updateVis();
@@ -140,6 +171,13 @@ function filterData() {
 
     scat.circles.remove();
     scat.updateVis();
+
+    // line.line.remove();
+    // line.marks.remove();
+    // line.updateVis();
+
+    hist.bars.remove();
+    hist.updateVis();
 }
 
 function getHabMap(_data) {

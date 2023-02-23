@@ -72,8 +72,13 @@
     stroke-width: 3px;
   }
 
+.test {
+    stroke: gold;
+    stroke-width: 3px;
+}
+
 /* Tooltip */
-#tooltip {
+/* #tooltip {
     position: absolute;
     display: none;
     background: #fff;
@@ -93,6 +98,15 @@
   #tooltip ul {
     margin: 5px 0 0 0;
     padding-left: 20px;
+  } */
+
+  /* Tooltip */
+.tooltip circle {
+    fill: none;
+    stroke: steelblue;
+  }
+  .tooltip text {
+    fill: steelblue;
   }
 
 /* .bar:hover {
