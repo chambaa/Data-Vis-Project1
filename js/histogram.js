@@ -147,7 +147,7 @@ class Histogram {
         .attr("class", "hist-bar")
         .attr("transform", function(d) { return "translate(" + vis.xScale(d.x0) + "," + vis.yScale(d.length) + ")"; })
         .attr("width", function(d) { return vis.xScale(d.x1) - vis.xScale(d.x0) ; })
-        .attr("height", function(d) { return vis.height - vis.yScale(d.length); })
+        .attr("height", function(d) { return vis.height - vis.yScale(d.length); })//vis.config.containerHeight - vis.config.margin.bottom + 5
         .style("fill", "#525252")
         .on("mouseover", function(d, i) {
           tooltip.html(`<b>${i.length}</b> exoplanets are between <b>${Math.min(...i)}</b> and <b>${Math.max(...i)}</b> parsecs from earth`).style("visibility", "visible");
@@ -163,7 +163,11 @@ class Histogram {
           tooltip.html(``).style("visibility", "hidden");
           d3.select(this).attr("fill", "#525252");
         });
-        // .style("fill", "steelblue")
+      
+      // vis.bars.transition()
+      //   .duration(2000)
+      //   .attr("y", d => svg_height - bottom_offset - scale(d))
+      //   .attr("height", d => scale(d));
 
         // Update the axes because the underlying scales might have changed
         vis.xAxisG.call(vis.xAxis);

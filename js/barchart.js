@@ -168,7 +168,7 @@ class Barchart {
       .append('rect')
         .attr('class', d => this.class(d))
         .attr('height', vis.yScale.bandwidth())
-        .attr('width', d => vis.xScale(vis.xValue(d)))
+        .attr('width', 0)
         .attr('x', 0)
         .attr('y', d => vis.yScale(vis.yValue(d)))
         .style("fill", colorScale)
@@ -242,6 +242,10 @@ class Barchart {
           filterData(); // Call global function to update scatter plot
           // d3.select(this).classed('active', !isActive); // Add class to style active filters with CSS
         });
+
+        vis.bars.transition()
+          .duration(2000)
+          .attr("width", d => vis.xScale(vis.xValue(d)))
     
     // Update the axes because the underlying scales might have changed
     vis.xAxisG.call(vis.xAxis);

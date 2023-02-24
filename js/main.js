@@ -178,7 +178,7 @@ function filterData() {
             var tempData3 = data.filter(d => e.sy_pnum === d.sy_pnum);
             var tempData4 = e.sy_stype === "unknown" ? unknownStarType : data.filter(d => e.sy_stype === d.st_spectype.charAt(0));
             var tempData5 = data.filter(d => e.sy_disc === d.discoverymethod);
-            var tempData6 = e.sy_hab === "unknown" ? unknownStarType : e.sy_hab === "habitable" ? habData : e.sy_hab === "un habitable" ? unhabData : []
+            var tempData6 = e.sy_hab === "unknown" ? unknownStarType : e.sy_hab === "habitable" ? habData : e.sy_hab === "unhabitable" ? unhabData : []
 
             tempData = tempData.concat(tempData2)
             tempData = tempData.concat(tempData3)
