@@ -115,8 +115,7 @@ class Barchart {
    */
   updateVis() {
     let vis = this;
-    vis.data.reverse();
-    console.log(vis.title)
+    // vis.data.reverse();
 
     // Specificy x- and y-accessor functions
     vis.xValue = d => d[1];
@@ -126,7 +125,11 @@ class Barchart {
     vis.yScale.domain(vis.num_map.keys());
     vis.xScale.domain([0, d3.max(vis.num_map, vis.xValue)]);
     vis.colorValue = d => d[0];
-    vis.class = d => (filter.find(e => e.sy_snum === d[0]) && vis.title === "Stars in System") ? "test" : "bar";
+    vis.class = d => ((filter.find(e => e.sy_snum === d[0]) && vis.title === "Stars in System") || 
+                      (filter.find(e => e.sy_pnum === d[0]) && vis.title === "Planets in System") ||
+                      (filter.find(e => e.sy_stype === d[0]) && vis.title === "Star Type") ||
+                      (filter.find(e => e.sy_hab === d[0]) && vis.title === "Habitable Zone") ||
+                      (filter.find(e => e.sy_disc === d[0]) && vis.title === "Discovery Method")) ? "selected" : "bar";
     // vis.yScale.domain(vis.data.map(vis.yValue));
 
     vis.renderVis();
@@ -138,10 +141,8 @@ class Barchart {
    * (i.e., user selects a different year)
    */
   renderVis() {
-    console.log("render")
-
     let vis = this;
-    vis.data.reverse();
+    // vis.data.reverse();
 
     var tooltipMiddle = vis.title == "Habitable Zone" ? "are in the" : vis.title == "Discovery Method" ? "where discovered by" : "have";
     var tooltipEnd = vis.title == "Habitable Zone" ? "zone" : vis.title == "Discovery Method" ? "method" : vis.title.toLowerCase();
@@ -201,8 +202,6 @@ class Barchart {
             } else {
               filter.push({"sy_snum": d[0]}); // Append filter
             }
-            filterData(d3.select(this)); // Call global function to update scatter plot
-            d3.select(this).classed('active', !isActive); // Add class to style active filters with CSS
           }
           else if(vis.title === "Planets in System") {
             isActive = filter.find(e => e.sy_pnum === d[0])
@@ -212,9 +211,36 @@ class Barchart {
             } else {
               filter.push({"sy_pnum": d[0]}); // Append filter
             }
-            filterData(); // Call global function to update scatter plot
-            d3.select(this).classed('active', !isActive); // Add class to style active filters with CSS
           }
+          else if(vis.title === "Star Type") {
+            isActive = filter.find(e => e.sy_stype === d[0])
+            if (isActive) {
+              const filterObj = filter.find(e => e.sy_stype === d[0])
+              filter = filter.filter(f => f !== filterObj); // Remove filter
+            } else {
+              filter.push({"sy_stype": d[0]}); // Append filter
+            }
+          }
+          else if(vis.title === "Habitable Zone") {
+            isActive = filter.find(e => e.sy_hab === d[0])
+            if (isActive) {
+              const filterObj = filter.find(e => e.sy_hab === d[0])
+              filter = filter.filter(f => f !== filterObj); // Remove filter
+            } else {
+              filter.push({"sy_hab": d[0]}); // Append filter
+            }
+          }
+          else if(vis.title === "Discovery Method") {
+            isActive = filter.find(e => e.sy_disc === d[0])
+            if (isActive) {
+              const filterObj = filter.find(e => e.sy_disc === d[0])
+              filter = filter.filter(f => f !== filterObj); // Remove filter
+            } else {
+              filter.push({"sy_disc": d[0]}); // Append filter
+            }
+          }
+          filterData(); // Call global function to update scatter plot
+          // d3.select(this).classed('active', !isActive); // Add class to style active filters with CSS
         });
     
     // Update the axes because the underlying scales might have changed

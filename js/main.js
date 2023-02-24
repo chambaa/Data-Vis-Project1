@@ -1,8 +1,11 @@
 let filter = [];
 let tableData = [];
 var dist = [];
+var unknownStarType = [];
+var habData = [];
+var unhabData = [];
 const validTypes = ["A", "F", "G", "K", "M"]
-let data, planet_bar, star_bar, snum_map, pnum_map, type_map, method_map, hab_map, type_bar, method_bar, hab_bar, scat, hist, line;
+let data, planet_bar, star_bar, snum_map, pnum_map, type_map, method_map, hab_map, type_bar, method_bar, hab_bar, scat, hist, line, year_map_sorted;
 
 /**
  * Load data from CSV file asynchronously and render bar chart
@@ -11,7 +14,7 @@ d3.csv('data/exoplanets-1.csv')
   .then(_data => {
 
     data = _data;
-    // Convert sales strings to numbers
+    // Convert strings to numbers
     data.forEach(d => {
       d.sy_snum = +d.sy_snum;
       d.sy_pnum = +d.sy_pnum;
@@ -31,6 +34,10 @@ d3.csv('data/exoplanets-1.csv')
       }
       tableData.push(ob);
 
+      if(!validTypes.includes(d.st_spectype.charAt(0))) {
+        unknownStarType.push(d);
+      }
+
     });
 
     // # of stars in system
@@ -48,7 +55,71 @@ d3.csv('data/exoplanets-1.csv')
     method_map = d3.rollup(data, v => v.length, d => d.discoverymethod);
 
     // Habitable zone
-    hab_map = getHabMap(data);
+    var dist_map = d3.group(_data, d => d.st_spectype.charAt(0))
+    var unknown = 0
+    dist_map.forEach((value, key) => {
+        if(!validTypes.includes(key)) {
+            unknown += value.length
+            dist_map.delete(key);
+        }
+    })
+    dist_map.forEach((value, key) => {
+        if(key == "A") {
+            value.forEach(item => {
+                if(item.pl_orbsmax >= 8.5 && item.pl_orbsmax < 12.5) {
+                    habData.push(item);
+                }
+                else {
+                    unhabData.push(item);
+                }
+            })
+        }
+        else if(key == "F") {
+            value.forEach(item => {
+                if(item.pl_orbsmax >= 1.5 && item.pl_orbsmax < 2.2) {
+                    habData.push(item);
+                }
+                else {
+                    unhabData.push(item);
+                }
+            })
+        }
+        else if(key == "G") {
+            value.forEach(item => {
+                if(item.pl_orbsmax >= 0.95 && item.pl_orbsmax < 1.4) {
+                    habData.push(item);
+                }
+                else {
+                    unhabData.push(item);
+                }
+            })
+        }
+        else if(key == "K") {
+            value.forEach(item => {
+                if(item.pl_orbsmax >= 0.38 && item.pl_orbsmax < 0.56) {
+                    habData.push(item);
+                }
+                else {
+                    unhabData.push(item);
+                }
+            })
+        }
+        else if(key == "M") {
+            value.forEach(item => {
+                if(item.pl_orbsmax >= 0.08 && item.pl_orbsmax < 0.12) {
+                    habData.push(item);
+                }
+                else {
+                    unhabData.push(item);
+                }
+            })
+        }
+    })
+    hab_map = new Map();
+    hab_map.set("habitable", habData.length);
+    hab_map.set("unhabitable", unhabData.length);
+    hab_map.set("unknown", unknown);
+    // hab_map = getHabMap(data);
     
     // Initialize chart
     star_bar = new Barchart({ parentElement: '#starBar'}, data, snum_map, "Stars in System", 80, "Number of Stars");
@@ -68,7 +139,7 @@ d3.csv('data/exoplanets-1.csv')
     hist.updateVis();
 
     const year_map = d3.rollup(data, v => v.length, d => d.disc_year);
-    const year_map_sorted = new Map([...year_map.entries()].sort());
+    year_map_sorted = new Map([...year_map.entries()].sort());
     line = new LineChart( { parentElement: '#line'}, year_map_sorted)
     line.updateVis();
 
@@ -80,25 +151,40 @@ d3.csv('data/exoplanets-1.csv')
   })
   .catch(error => console.error(error));
 
+function clickFunction() {
+    filter = [];
+    filterData();
+}
 
-function filterData(test) {
+function filterData() {
     if (filter.length == 0) {
+        document.getElementById("btn").disabled = true;
+        document.getElementById("btn").title = "Click on a bar to apply filters";
         star_bar.num_map = snum_map;
         planet_bar.num_map = pnum_map;
         method_bar.num_map = method_map;
         hab_bar.num_map = hab_map;
         type_bar.num_map = type_map;
         scat.data = data;
-        line.data = data;
+        line.data = year_map_sorted;
         hist.num_map = dist;
         tabulate(tableData, ["Name", "Radius", "Mass", "Discovery Year"]);
     } else {
+        document.getElementById("btn").disabled = false;
+        document.getElementById("btn").title = "";
         var tempData = [];
         filter.forEach(e => {
             var tempData2 = data.filter(d => e.sy_snum === d.sy_snum);
             var tempData3 = data.filter(d => e.sy_pnum === d.sy_pnum);
+            var tempData4 = e.sy_stype === "unknown" ? unknownStarType : data.filter(d => e.sy_stype === d.st_spectype.charAt(0));
+            var tempData5 = data.filter(d => e.sy_disc === d.discoverymethod);
+            var tempData6 = e.sy_hab === "unknown" ? unknownStarType : e.sy_hab === "habitable" ? habData : e.sy_hab === "un habitable" ? unhabData : []
+
             tempData = tempData.concat(tempData2)
             tempData = tempData.concat(tempData3)
+            tempData = tempData.concat(tempData4)
+            tempData = tempData.concat(tempData5)
+            tempData = tempData.concat(tempData6)
         });
 
         // Update Stars
@@ -172,9 +258,8 @@ function filterData(test) {
     scat.circles.remove();
     scat.updateVis();
 
-    // line.line.remove();
-    // line.marks.remove();
-    // line.updateVis();
+    line.marks.remove();
+    line.updateVis();
 
     hist.bars.remove();
     hist.updateVis();
@@ -190,8 +275,8 @@ function getHabMap(_data) {
                 dist_map.delete(key);
             }
         })
-        var unhab = 0;
         var hab = 0;
+        var unhab = 0;
         dist_map.forEach((value, key) => {
             if(key == "A") {
                 value.forEach(item => {
@@ -245,9 +330,15 @@ function getHabMap(_data) {
             }
         })
         const hab_map2 = new Map();
-        hab_map2.set("habitable", hab);
-        hab_map2.set("unhabitable", unhab);
-        hab_map2.set("unknown", unknown);
+        if(hab > 0) {
+            hab_map2.set("habitable", hab);
+        }
+        if(unhab > 0) {
+            hab_map2.set("unhabitable", unhab);
+        }
+        if(unknown > 0) {
+            hab_map2.set("unknown", unknown);
+        }
 
         return hab_map2;
 }
@@ -263,6 +354,8 @@ function getStarTypeMap(data) {
             tmp_type_map.delete(key);
         }
     })
-    tmp_type_map.set("unknown", unknown)
+    if(unknown > 0) {
+        tmp_type_map.set("unknown", unknown)
+    }
     return tmp_type_map;
 }

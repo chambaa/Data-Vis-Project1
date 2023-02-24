@@ -151,15 +151,11 @@ class Scatterplot {
           .attr('r', 4)
           .attr('cy', d => vis.yScale(vis.yValue(d)))
           .attr('cx', d => vis.xScale(vis.xValue(d)))
-        //   .attr('fill', "steelblue");
           .attr('fill', d => vis.colorScale(vis.colorValue(d)))
           .on("mouseover", function(d, i) {
-            console.log(i)
             tooltip.html(`<div>Name: ${i.pl_name}</div>
             <div>Mass: ${i.st_mass}</div>
             <div>Radius: ${i.st_rad}</div>`).style("visibility", "visible");
-            // d3.select(this)
-            //   .attr("fill", "black");
           })
           .on("mousemove", function(){
             tooltip

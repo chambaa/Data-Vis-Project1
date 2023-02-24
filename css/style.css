@@ -72,33 +72,34 @@
     stroke-width: 3px;
   }
 
-.test {
+.selected {
     stroke: gold;
     stroke-width: 3px;
 }
 
-/* Tooltip */
-/* #tooltip {
-    position: absolute;
-    display: none;
-    background: #fff;
-    box-shadow: 3px 3px 3px 0px rgb(92 92 92 / 0.5);
-    border: 1px solid #ddd;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 8px;
-    min-width: 160px;
-    color: #333;
+.btnClass {
+    margin: 4px;
 }
-  .tooltip-title {
-    color: #000;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  #tooltip ul {
-    margin: 5px 0 0 0;
-    padding-left: 20px;
-  } */
+
+.btn {
+    border-radius: 12px;
+    /* box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); */
+    background-color: steelblue;
+    color: white;
+    border: 2px solid #386890;
+    padding: 5px 12px;
+}
+
+.btn:hover {
+    background-color: #386890;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    background-color: #333;
+    cursor: not-allowed;
+    border: 2px solid #333;
+}
 
   /* Tooltip */
 .tooltip circle {

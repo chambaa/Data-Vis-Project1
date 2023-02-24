@@ -63,7 +63,7 @@ class LineChart {
           .attr('class', 'axis y-axis');
   
       // We need to make sure that the tracking area is on top of other chart elements
-      vis.marks = vis.chart.append('g');
+      // vis.marks = vis.chart.append('g');
       vis.trackingArea = vis.chart.append('rect')
       .attr('width', vis.width)
       .attr('height', vis.height)
@@ -133,7 +133,7 @@ class LineChart {
       let vis = this;
   
       // Add line path
-      vis.marks.selectAll('.chart-line')
+      vis.marks = vis.chart.selectAll('.chart-line')
           .data([vis.data])
         .join('path')
           .attr('stroke', '#525252')
@@ -156,15 +156,12 @@ class LineChart {
           for (const entry of vis.data) {
             dataArray.push(entry);
           }
-          // console.log(dataArray)
+
           // Find nearest data point
           const index = vis.bisectDate(dataArray, date, 1);
           const a = dataArray[index - 1];
-          console.log(a)
           const b = dataArray[index];
-          console.log(b)
           const d = b && (date - a[0] > b[0] - date) ? b : a; 
-          console.log(d)
 
           // Update tooltip
           vis.tooltip.select('circle')
