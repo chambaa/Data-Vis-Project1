@@ -45,7 +45,7 @@ class Barchart {
     vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom - 30;
 
     // Color scale for Star Type
-    vis.colorScale = d3.scaleOrdinal().range(["#83B692", "#fb8500", "#D64933", "#7A9CC6", "#8D6A9F", "#525252"])
+    vis.colorScale = d3.scaleOrdinal().range(["#83B692", "#fb8500", "#D64933", "#7A9CC6", "#8D6A9F", "#858585"])
     .domain(["A", "F", "G", "K", "M" ]);
 
     // Initialize scales

@@ -11,9 +11,9 @@ class BubbleChart {
       // you might want to use getter and setter methods for individual attributes
       this.config = {
         parentElement: _config.parentElement,
-        containerWidth: _config.containerWidth || 1150,
+        containerWidth: _config.containerWidth || 1600,
         containerHeight: _config.containerHeight || 250,
-        margin: _config.margin || {top: 50, right: 50, bottom: 50, left: 50}
+        margin: _config.margin || {top: 50, right: 50, bottom: 50, left: 100}
       }
       this.data = _data;
       this.initVis();
@@ -57,8 +57,8 @@ class BubbleChart {
         .range([ vis.height, 0]);
 
         // Add a scale for bubble size
-        vis.zScale = d3.scaleLinear()
-        .range([ 0, 40]);
+        vis.zScale = d3.scaleSqrt()
+        .range([0, 70]);
 
         // Initialize axes
         vis.xAxis = d3.axisBottom(vis.xScale)
@@ -76,8 +76,8 @@ class BubbleChart {
         .attr('class', 'axis y-axis');
 
         // Add a scale for bubble color
-        vis.myColor = d3.scaleOrdinal(d3.schemeSet1)
-        .domain(["Gas", "Terrestrial", "Minor"]);     
+        vis.myColor = d3.scaleOrdinal().range(["#A30000", "#004369", "#167D7F", "#83B692", "#fb8500", "#D64933", "#7A9CC6", "#8D6A9F", "#858585"])
+        .domain(["Gas", "Terrestrial", "Minor","A", "F", "G", "K", "M" ]);   
         
         vis.svg.append("text")
             .attr("class", "xlabel")
@@ -85,21 +85,54 @@ class BubbleChart {
             .attr("x",vis.width/2)
             .attr("y", vis.height + 40)
             .text("Distance from Star [AU]");
+
+        if(vis.data[0].st_rad === 0) {
+            document.getElementById("checkbox").disabled = true;
+            document.getElementById("checkbox").title = "Star Radius Unknown";
+        }
+        else {
+            document.getElementById("checkbox").disabled = false;
+            document.getElementById("checkbox").title = "Show Star on map";
+        }
+
+        function update(){
+
+            // For each check box:
+            d3.selectAll(".checkbox").each(function(d){
+                var cb = d3.select(this);
+                var grp = cb.property("value")
+        
+                if(cb.property("checked")){
+                    vis.dots.remove();
+                    var stellertoEarth = 109.076 * vis.data[0].st_rad
+                    vis.data.push({pl_rade: stellertoEarth, pl_orbsmax: 0, pl_bmasse: -1, st_spectype: vis.data[0].st_spectype})
+                    vis.updateVis();
+                }
+                else {
+                    vis.data = vis.data.filter(d => d.pl_bmasse != -1);
+                    vis.dots.remove();
+                    vis.updateVis();
+                }
+            })
+        }
+        
+        // When a button change, I run the update function
+        d3.selectAll(".checkbox").on("change",update);
+
     }
 
     updateVis() {
         let vis = this;
+        console.log(vis.data)
         
         // Specificy accessor functions
-        // var earthMass = data[x.rowIndex - 1].pl_bmasse;
-        // var planetType = d => d.pl_bmasse > 10 ? "Gas" : d.pl_bmasse > 0.1 ? "Terrestrial" : "Minor";
-        vis.colorValue = d => d.pl_bmasse > 10 ? "Gas" : d.pl_bmasse > 0.1 ? "Terrestrial" : "Minor";
+        vis.colorValue = d => d.pl_bmasse > 10 ? "Gas" : d.pl_bmasse > 0.1 ? "Terrestrial" : d.pl_bmasse > 0 ? "Minor" : d.st_spectype.charAt(0);
         vis.xValue = d => d.pl_orbsmax;
         vis.yValue = d => 1;
         vis.zValue = d => d.pl_rade;
     
         // // Set the scale input domains
-        vis.xScale.domain([0, d3.max(vis.data, vis.xValue) + 0.1]);
+        vis.xScale.domain([0, d3.max(vis.data, vis.xValue) + 0.01]);
         vis.yScale.domain([1, d3.max(vis.data, vis.yValue)]);
         vis.zScale.domain([0, d3.max(vis.data, vis.zValue)])
     
@@ -127,8 +160,8 @@ class BubbleChart {
             .style("position", "absolute")
             .style("color", "#fff");
         
-            // Add dots
-            vis.svg.append('g')
+        // Add dots
+        vis.dots = vis.svg.append('g')
             .selectAll("dot")
             .data(vis.data)
             .enter()
@@ -151,13 +184,12 @@ class BubbleChart {
                     })
                     .on("mouseout", function() {
                     tooltip.html(``).style("visibility", "hidden");
-                    d3.select(this).attr("fill", d => vis.colorScale(vis.colorValue(d)));
+                    d3.select(this).attr("fill", d => vis.myColor(vis.colorValue(d)));
                     });
 
             vis.xAxisG
                 .call(vis.xAxis)
                 .call(g => g.select('.domain').remove());
-
      
     }
   }

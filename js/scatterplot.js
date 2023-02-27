@@ -40,7 +40,7 @@ class Scatterplot {
       vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
   
       // Initialize scales
-      vis.colorScale = d3.scaleOrdinal().range(["black","#83B692", "#fb8500", "#D64933", "#7A9CC6", "#8D6A9F", "#525252"])
+      vis.colorScale = d3.scaleOrdinal().range(["black","#83B692", "#fb8500", "#D64933", "#7A9CC6", "#8D6A9F", "#858585"])
           .domain(["S","A", "F", "G", "K", "M" ]);
   
       vis.xScale = d3.scaleLog()
@@ -185,7 +185,8 @@ class Scatterplot {
           .on("mouseout", function() {
             tooltip.html(``).style("visibility", "hidden");
             d3.select(this).attr("fill", d => vis.colorScale(vis.colorValue(d)));
-          });
+          })
+          .on("click", function(d){if(d.target.__data__.st_spectype !== "S") {detailClick(d.target.__data__, "scatter")}});
       
       // Update the axes/gridlines
       // We use the second .call() to remove the axis and just show gridlines

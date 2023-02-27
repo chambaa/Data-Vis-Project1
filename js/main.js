@@ -5,7 +5,7 @@ var unknownStarType = [];
 var habData = [];
 var unhabData = [];
 const validTypes = ["A", "F", "G", "K", "M"]
-let data, planet_bar, star_bar, snum_map, pnum_map, type_map, method_map, hab_map, type_bar, method_bar, hab_bar, scat, hist, line, year_map_sorted, scat_data;
+let data, tempDataG, planet_bar, star_bar, snum_map, pnum_map, type_map, method_map, hab_map, type_bar, method_bar, hab_bar, scat, hist, line, year_map_sorted, scat_data;
 
 
 /**
@@ -26,6 +26,7 @@ d3.csv('data/exoplanets-1.csv')
       d.pl_bmasse = +d.pl_bmasse;
       d.disc_year = +d.disc_year;
       d.pl_orbsmax = +d.pl_orbsmax;
+      d.pl_orbeccen = +d.pl_orbeccen;
 
       dist.push(d.sy_dist)
 
@@ -43,6 +44,7 @@ d3.csv('data/exoplanets-1.csv')
       }
 
     });
+    tempDataG = data
 
     // # of stars in system
     snum_map = d3.rollup(data, v => v.length, d => d.sy_snum);
@@ -123,7 +125,6 @@ d3.csv('data/exoplanets-1.csv')
     hab_map.set("habitable", habData.length);
     hab_map.set("unhabitable", unhabData.length);
     hab_map.set("unknown", unknown);
-    // hab_map = getHabMap(data);
     
     // Initialize chart
     star_bar = new Barchart({ parentElement: '#starBar'}, data, snum_map, "Stars in System", 80, "Number of Stars");
@@ -171,6 +172,7 @@ function clickFunction() {
 
 function filterData() {
     if (filter.length == 0) {
+        tempDataG = data;
         document.getElementById("btn").disabled = true;
         document.getElementById("btn").title = "Click on a bar to apply filters";
         star_bar.num_map = snum_map;
@@ -247,6 +249,7 @@ function filterData() {
             d.pl_rade = +d.pl_rade;
             d.pl_bmasse = +d.pl_bmasse;
             d.pl_orbsmax = +d.pl_orbsmax;
+            d.pl_orbeccen = +d.pl_orbeccen;
        
             var ob = {
               "Name": d.pl_name,
@@ -264,6 +267,7 @@ function filterData() {
         // Update Hist
         hist.num_map = tmpDist;
     }
+    tempDataG = tempData
 
     star_bar.bars.remove();
     star_bar.updateVis();
@@ -384,11 +388,14 @@ function getStarTypeMap(data) {
     return tmp_type_map;
 }
 
-function detailClick(x) {
-    var systemData = data.filter(d => data[x.rowIndex - 1].sys_name === d.sys_name);
+function detailClick(x, type) {
+    console.log(x)
+    var dataTest = filter.length > 0 ? tempDataG : data;
+    var fullRowData = type === "scatter" ? x : dataTest[x.rowIndex - 1];
+    var systemData = data.filter(d => fullRowData.sys_name === d.sys_name);
     document.getElementById("mainVis").style.display = "none";
-    document.getElementById("name").innerHTML = `Exoplanet: ${data[x.rowIndex - 1].pl_name}`;
-    var earthMass = data[x.rowIndex - 1].pl_bmasse;
+    document.getElementById("name").innerHTML = `Exoplanet: ${fullRowData.pl_name}`;
+    var earthMass = fullRowData.pl_bmasse;
     var planetType = earthMass > 50 ? "Gas giant - Jovian" : earthMass > 10 ? "Gas giant - Neptunian" : earthMass > 2 ? 
     "Terrestrial - Superterran (super-Earths)" : earthMass > 0.5 ? "Terrestrial - Terran (Earths)" : earthMass > 0.1 ? 
     "Terrestrial - Subterran" : earthMass > 0.00001 ? "Minor - Mercurian" : "Minor - Asteroidan";
@@ -406,4 +413,5 @@ function homeFunction() {
     document.getElementById("mainVis").style.display = "block";
     document.getElementById("bubbleChart").innerHTML = "";
     document.getElementById("orbit").innerHTML = "";
+    document.getElementById("checkbox").checked = false;
 }

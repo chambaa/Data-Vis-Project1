@@ -33,12 +33,11 @@
             <ul>
                 <li style="font-size: medium;"><a href="https://api.observablehq.com/@d3/color-legend.js?v=3">@d3/color-legend</a></li>
                 <li style="font-size: medium;"><a href="https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js">runtime</a></li>
-                <li style="font-size: medium;">placeholder</li>
             </ul>
         </div>
         <div style="padding-right: 20px;">
             <a href="https://chambersanna99.wixsite.com/ui-portfolio/projects-7" style="font-size: 15px">Project Write-Up</a><br/>
-            <a href="https://chambersanna99.wixsite.com/ui-portfolio/projects-7" style="font-size: 15px">Data Source</a>
+            <a href="https://exoplanetarchive.ipac.caltech.edu/cgi-bin/TblView/nph-tblView?app=ExoTbls&config=PS" style="font-size: 15px">Data Source</a>
         </div>
     </div>
 
@@ -71,6 +70,7 @@
             <h2 id="type">Exoplanet Type</h2>
         </div>
         <div id="bubbleDiv">
+            <input type="checkbox" class="checkbox" value="star" id="checkbox"><label>Show Star</label>
             <div id="bubbleChart"></div>
         </div>
         <div id="orbitDiv" class="orbitDiv">
@@ -90,30 +90,40 @@
         // Example chart data copied from https://observablehq.com/@d3/stacked-area-chart
         const colorBubble = d3.scaleOrdinal()
             .domain(["Gas giant planet", "Terrestrial planet", "Minor planet, moon or comet"])
-            .range(d3.schemeSet1)
+            .range(["#A30000", "#004369", "#167D7F"])
         const marginBubble = ({top: 20, right: 30, bottom: 30, left: 40})
         
         // // Container element into which the swatches will render
         const containerBubble = document.getElementById("bubbleDiv")
+        const planetLabel = document.createElement("label");
+        planetLabel.style.marginLeft = "20px"
+        const planetText = document.createTextNode("Planet Types: ");
+        planetLabel.appendChild(planetText);
+        containerBubble.appendChild(planetLabel);
         
         renderSwatches(containerBubble, colorBubble, marginBubble)
 
-        const colorOrbit = d3.scaleOrdinal().range(["#83B692", "#fb8500", "#D64933", "#7A9CC6", "#8D6A9F", "#525252"])
+        const colorOrbit = d3.scaleOrdinal().range(["#83B692", "#fb8500", "#D64933", "#7A9CC6", "#8D6A9F", "#858585"])
           .domain(["A", "F", "G", "K", "M", "Unknown"]);
         const marginOrbit = ({top: 20, right: 30, bottom: 30, left: 40})
         
         // // Container element into which the swatches will render
         const containerOrbit = document.getElementById("orbitDiv")
+        const orbitLabel = document.createElement("label");
+        orbitLabel.style.marginLeft = "20px"
+        const orbitText = document.createTextNode("Star Types: ");
+        orbitLabel.appendChild(orbitText);
+        containerOrbit.appendChild(orbitLabel);
         
         renderSwatches(containerOrbit, colorOrbit, marginOrbit)
           
         async function renderSwatches(el, color, margin) {
           // Get the value of the "swatches" notebook cell, which is the function we want, which returns a DOM element
-          const module = new Runtime().module(d3_colorLegend);
+          const module = new Runtime().module(d3_colorLegend)
           const swatches = await module.value("swatches");
           
           // Finally, call `swatches` with our options and append it to the container
-          const element = swatches({color, marginLeft: margin.left, columns: "180px"});
+          const element = swatches({color, marginLeft: margin.left, columns: "150px"});
           el.appendChild(element);
         }
     </script>
