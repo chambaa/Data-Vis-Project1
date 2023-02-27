@@ -121,7 +121,6 @@ class BubbleChart {
 
     updateVis() {
         let vis = this;
-        console.log(vis.data)
         
         // Specificy accessor functions
         vis.colorValue = d => d.pl_bmasse > 10 ? "Gas" : d.pl_bmasse > 0.1 ? "Terrestrial" : d.pl_bmasse > 0 ? "Minor" : d.st_spectype.charAt(0);
