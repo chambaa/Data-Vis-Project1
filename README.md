@@ -10,3 +10,7 @@
 - This project was developed for a 15 inch screen
 - Other screen sizes will not show the visualizations as intended
 - Bellow are pictures of the inteded view
+![Main View](/pics/mainView.png)
+![Filtered View](/pics/filteredView.png)
+![Browser View](/pics/browserView.png)
+![Browser View with Star](/pics/browserViewStar.png)
