@@ -5,7 +5,8 @@ var unknownStarType = [];
 var habData = [];
 var unhabData = [];
 const validTypes = ["A", "F", "G", "K", "M"]
-let data, planet_bar, star_bar, snum_map, pnum_map, type_map, method_map, hab_map, type_bar, method_bar, hab_bar, scat, hist, line, year_map_sorted;
+let data, planet_bar, star_bar, snum_map, pnum_map, type_map, method_map, hab_map, type_bar, method_bar, hab_bar, scat, hist, line, year_map_sorted, scat_data;
+
 
 /**
  * Load data from CSV file asynchronously and render bar chart
@@ -21,14 +22,17 @@ d3.csv('data/exoplanets-1.csv')
       d.sy_dist = +d.sy_dist;
       d.st_rad = +d.st_rad;
       d.st_mass = +d.st_mass;
+      d.pl_rade = +d.pl_rade;
+      d.pl_bmasse = +d.pl_bmasse;
       d.disc_year = +d.disc_year;
+      d.pl_orbsmax = +d.pl_orbsmax;
 
       dist.push(d.sy_dist)
 
       var ob = {
         "Name": d.pl_name,
-        "Radius": d.st_rad,
-        "Mass": d.st_mass,
+        "Radius": d.pl_rade,
+        "Mass": d.pl_bmasse,
         "Discovery Year": d.disc_year
 
       }
@@ -143,7 +147,16 @@ d3.csv('data/exoplanets-1.csv')
     line = new LineChart( { parentElement: '#line'}, year_map_sorted)
     line.updateVis();
 
-    scat = new Scatterplot( { parentElement: '#scat'}, data);
+    scat_data = [...data];;
+    scat_data.push({"pl_name": "Mars", "pl_rade":0.53, "pl_bmasse": 0.107, "st_spectype":"S"})
+    scat_data.push({"pl_name": "Venus", "pl_rade":0.95, "pl_bmasse": 0.815, "st_spectype":"S"})
+    scat_data.push({"pl_name": "Mecury", "pl_rade":0.38, "pl_bmasse": 0.055, "st_spectype":"S"})
+    scat_data.push({"pl_name": "Neptune", "pl_rade":3.86, "pl_bmasse": 17.15, "st_spectype":"S"})
+    scat_data.push({"pl_name": "Uranus", "pl_rade":3.98, "pl_bmasse": 14.54, "st_spectype":"S"})
+    scat_data.push({"pl_name": "Saturn", "pl_rade":9.13, "pl_bmasse": 95.16, "st_spectype":"S"})
+    scat_data.push({"pl_name": "Jupiter", "pl_rade":11.21, "pl_bmasse": 317.91, "st_spectype":"S"})
+    scat_data.push({"pl_name": "Earth", "pl_rade":1, "pl_bmasse": 1, "st_spectype":"S"})
+    scat = new Scatterplot( { parentElement: '#scat'}, scat_data);
     scat.updateVis();
 
     tabulate(tableData, ["Name", "Radius", "Mass", "Discovery Year"]);
@@ -165,7 +178,7 @@ function filterData() {
         method_bar.num_map = method_map;
         hab_bar.num_map = hab_map;
         type_bar.num_map = type_map;
-        scat.data = data;
+        scat.data = scat_data;
         line.data = year_map_sorted;
         hist.num_map = dist;
         tabulate(tableData, ["Name", "Radius", "Mass", "Discovery Year"]);
@@ -207,7 +220,16 @@ function filterData() {
         type_bar.num_map = getStarTypeMap(tempData);
 
         // Update scatterplot
-        scat.data = tempData;
+        var tmp_scat_data =  [...tempData];
+        tmp_scat_data.push({"pl_name": "Mars", "pl_rade":0.53, "pl_bmasse": 0.107, "st_spectype":"S"})
+        tmp_scat_data.push({"pl_name": "Venus", "pl_rade":0.95, "pl_bmasse": 0.815, "st_spectype":"S"})
+        tmp_scat_data.push({"pl_name": "Mecury", "pl_rade":0.38, "pl_bmasse": 0.055, "st_spectype":"S"})
+        tmp_scat_data.push({"pl_name": "Neptune", "pl_rade":3.86, "pl_bmasse": 17.15, "st_spectype":"S"})
+        tmp_scat_data.push({"pl_name": "Uranus", "pl_rade":3.98, "pl_bmasse": 14.54, "st_spectype":"S"})
+        tmp_scat_data.push({"pl_name": "Saturn", "pl_rade":9.13, "pl_bmasse": 95.16, "st_spectype":"S"})
+        tmp_scat_data.push({"pl_name": "Jupiter", "pl_rade":11.21, "pl_bmasse": 317.91, "st_spectype":"S"})
+        tmp_scat_data.push({"pl_name": "Earth", "pl_rade":1, "pl_bmasse": 1, "st_spectype":"S"})
+        scat.data = tmp_scat_data;
 
         // Update Line
         const tmp_year_map = d3.rollup(tempData, v => v.length, d => d.disc_year);
@@ -222,11 +244,14 @@ function filterData() {
             d.st_mass = +d.st_mass;
             d.disc_year = +d.disc_year;
             d.sy_dist = +d.sy_dist;
+            d.pl_rade = +d.pl_rade;
+            d.pl_bmasse = +d.pl_bmasse;
+            d.pl_orbsmax = +d.pl_orbsmax;
        
             var ob = {
               "Name": d.pl_name,
-              "Radius": d.st_rad,
-              "Mass": d.st_mass,
+              "Radius": d.pl_rade,
+              "Mass": d.pl_bmasse,
               "Discovery Year": d.disc_year
       
             }
@@ -339,7 +364,6 @@ function getHabMap(_data) {
         if(unknown > 0) {
             hab_map2.set("unknown", unknown);
         }
-
         return hab_map2;
 }
 
@@ -358,4 +382,28 @@ function getStarTypeMap(data) {
         tmp_type_map.set("unknown", unknown)
     }
     return tmp_type_map;
+}
+
+function detailClick(x) {
+    var systemData = data.filter(d => data[x.rowIndex - 1].sys_name === d.sys_name);
+    document.getElementById("mainVis").style.display = "none";
+    document.getElementById("name").innerHTML = `Exoplanet: ${data[x.rowIndex - 1].pl_name}`;
+    var earthMass = data[x.rowIndex - 1].pl_bmasse;
+    var planetType = earthMass > 50 ? "Gas giant - Jovian" : earthMass > 10 ? "Gas giant - Neptunian" : earthMass > 2 ? 
+    "Terrestrial - Superterran (super-Earths)" : earthMass > 0.5 ? "Terrestrial - Terran (Earths)" : earthMass > 0.1 ? 
+    "Terrestrial - Subterran" : earthMass > 0.00001 ? "Minor - Mercurian" : "Minor - Asteroidan";
+    document.getElementById("type").innerHTML = `Planet Type: ${planetType}`;
+
+    var orbit = new Orbit( { parentElement: '#orbit'}, systemData);
+    orbit.initVis();
+    document.getElementById("detailVis").style.display = "block";
+    var bubble = new BubbleChart( { parentElement: '#bubbleChart'}, systemData);
+    bubble.updateVis();
+}
+
+function homeFunction() {
+    document.getElementById("detailVis").style.display = "none";
+    document.getElementById("mainVis").style.display = "block";
+    document.getElementById("bubbleChart").innerHTML = "";
+    document.getElementById("orbit").innerHTML = "";
 }

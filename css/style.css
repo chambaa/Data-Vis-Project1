@@ -41,6 +41,13 @@
 
 .title {
     font-weight: bold;
+    fill: black;
+}
+
+.selectedBrush {
+    opacity: 1 !important;
+    stroke: black;
+    stroke-width: 1px;
 }
 
 .star_source {
@@ -110,6 +117,14 @@
     fill: steelblue;
   }
 
-/* .bar:hover {
-  fill: steelblue;
-} */
+  .bubbles {
+    stroke-width: 2px;
+    stroke: white;
+  }
+  .bubbles:hover {
+    stroke: black;
+  }
+
+  .orbitDiv {
+    margin: 10px;
+  }

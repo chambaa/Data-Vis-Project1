@@ -55,12 +55,12 @@ class LineChart {
   
       // Append empty x-axis group and move it to the bottom of the chart
       vis.xAxisG = vis.chart.append('g')
-          .attr('class', 'axis x-axis')
+          .attr('class', 'x-axis')
           .attr('transform', `translate(0,${vis.height})`);
       
       // Append y-axis group
       vis.yAxisG = vis.chart.append('g')
-          .attr('class', 'axis y-axis');
+          .attr('class', 'y-axis');
   
       // We need to make sure that the tracking area is on top of other chart elements
       // vis.marks = vis.chart.append('g');
@@ -121,7 +121,7 @@ class LineChart {
       vis.xScale.domain(d3.extent(vis.data, vis.xValue));
       vis.yScale.domain(d3.extent(vis.data, vis.yValue));
 
-      vis.bisectDate = d3.bisector(vis.xValue).left;
+      vis.bisectDate = d3.bisector(vis.xValue).left;  
   
       vis.renderVis();
     }
@@ -171,9 +171,22 @@ class LineChart {
               .attr('transform', `translate(${vis.xScale(new Date(parseInt(d[0]),0))},${(vis.yScale(d[1]) - 15)})`)
               .text(Math.round(d[1]));
         });
+
+      vis.marks.transition()
+      .duration(2000)
+      .attr("d", d3.line()
+        .x(d => vis.xScale(vis.xValue(d)))
+        .y(d => vis.yScale(vis.yValue(d))))
+        .attr("fill", "none")
+        .attr("stroke", "#525252")
+        .attr("stroke-width", 2)
       
       // Update the axes
-      vis.xAxisG.call(vis.xAxis);
-      vis.yAxisG.call(vis.yAxis);
+      vis.xAxisG.transition()
+      .duration(2000)
+      .call(vis.xAxis);
+      vis.yAxisG.transition()
+      .duration(2000)
+      .call(vis.yAxis);
     }
   }

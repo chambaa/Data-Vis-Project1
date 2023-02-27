@@ -23,13 +23,14 @@ function tabulate(data, columns) {
 	var rows = tbody.selectAll('tr')
 	  .data(data)
 	  .enter()
-	  .append('tr');
+	  .append('tr')
+	  .attr("onclick",	"detailClick(this)")
 
 	// create a cell in each row for each column
 	var cells = rows.selectAll('td')
 	  .data(function (row) {
 	    return columns.map(function (column) {
-	      return {column: column, value: row[column]};
+	      return {column: column, value: row[column] === 0 ? "Unknown" : row[column]};
 	    });
 	  })
 	  .enter()
