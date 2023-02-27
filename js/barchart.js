@@ -142,7 +142,6 @@ class Barchart {
    */
   renderVis() {
     let vis = this;
-    // vis.data.reverse();
 
     var tooltipMiddle = vis.title == "Habitable Zone" ? "are in the" : vis.title == "Discovery Method" ? "where discovered by" : "have";
     var tooltipEnd = vis.title == "Habitable Zone" ? "zone" : vis.title == "Discovery Method" ? "method" : vis.title.toLowerCase();
@@ -240,7 +239,6 @@ class Barchart {
             }
           }
           filterData(); // Call global function to update scatter plot
-          // d3.select(this).classed('active', !isActive); // Add class to style active filters with CSS
         });
 
         vis.bars.transition()

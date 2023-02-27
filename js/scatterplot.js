@@ -116,7 +116,6 @@ class Scatterplot {
       vis.yValue = d => d.pl_bmasse > 0 ? d.pl_bmasse : 0.1;
   
       // Set the scale input domains
-      console.log(d3.min(vis.data, d => d.pl_rade))
       vis.xScale.domain([0.1, d3.max(vis.data, vis.xValue)]);
       vis.yScale.domain([0.01, d3.max(vis.data, vis.yValue)]);
   
@@ -202,7 +201,6 @@ class Scatterplot {
       function updateChart(selection) {
 
         // Get the selection coordinate
-        // extent = d3.event.selection   // looks like [ [12,11], [132,178]]
         vis.circles.classed("selectedBrush", function(d){return isBrushed(selection, vis.xScale(vis.xValue(d)), vis.yScale(vis.yValue(d)) ) } )
 
       }

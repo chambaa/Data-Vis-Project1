@@ -389,7 +389,6 @@ function getStarTypeMap(data) {
 }
 
 function detailClick(x, type) {
-    console.log(x)
     var dataTest = filter.length > 0 ? tempDataG : data;
     var fullRowData = type === "scatter" ? x : dataTest[x.rowIndex - 1];
     var systemData = data.filter(d => fullRowData.sys_name === d.sys_name);

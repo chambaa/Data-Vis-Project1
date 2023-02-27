@@ -37,7 +37,6 @@ class LineChart {
           .ticks(6)
           .tickSizeOuter(0)
           .tickPadding(10)
-          //.tickFormat(d => d + ' km');
   
       vis.yAxis = d3.axisLeft(vis.yScale)
           .ticks(4)
@@ -63,14 +62,11 @@ class LineChart {
           .attr('class', 'y-axis');
   
       // We need to make sure that the tracking area is on top of other chart elements
-      // vis.marks = vis.chart.append('g');
       vis.trackingArea = vis.chart.append('rect')
       .attr('width', vis.width)
       .attr('height', vis.height)
       .attr('fill', 'none')
       .attr('pointer-events', 'all');
-
-      //(event,d) => {
 
       // Empty tooltip group (hidden by default)
       vis.tooltip = vis.chart.append('g')

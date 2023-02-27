@@ -59,9 +59,9 @@ class Histogram {
 
       // set the parameters for the histogram
       vis.histogram = d3.histogram()
-          .value(d => d)   // I need to give the vector of value
-          .domain(vis.xScale.domain())  // then the domain of the graphic
-          .thresholds(vis.xScale.ticks(70)); // then the numbers of bins
+          .value(d => d)
+          .domain(vis.xScale.domain())
+          .thresholds(vis.xScale.ticks(70));
 
         // And apply this function to data to get the bins
         vis.bins = vis.histogram(vis.num_map);
@@ -69,7 +69,6 @@ class Histogram {
         // Y axis: scale and draw:
         vis.yScale = d3.scaleLinear()
             .range([vis.height, 0]);
-            // vis.yScale.domain([0, d3.max(vis.bins, function(d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
 
         // Initialize axes
         vis.xAxis = d3.axisBottom(vis.xScale)
@@ -151,8 +150,6 @@ class Histogram {
         .style("fill", "#525252")
         .on("mouseover", function(d, i) {
           tooltip.html(`<b>${i.length}</b> exoplanets are between <b>${Math.min(...i)}</b> and <b>${Math.max(...i)}</b> parsecs from earth`).style("visibility", "visible");
-          // d3.select(this)
-          //   .attr("fill", "steelblue");
         })
         .on("mousemove", function(){
           tooltip

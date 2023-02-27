@@ -44,17 +44,10 @@ class Orbit {
         .style("fill", color);
 
         var i = 0;
-        console.log(vis.data)
         vis.data = vis.data.slice().sort((a, b) => d3.descending(a.pl_orbsmax, b.pl_orbsmax))
-        console.log(vis.data)
 
         vis.data.forEach(element => {
-
-            // console.log( 100  * element.pl_orbeccen)
-            // console.log((vis.config.containerHeight * element.pl_orbeccen) * 5)
             var test = 6 - i;
-            console.log((30 / element.pl_orbsmax) + 30)
-            console.log((vis.config.containerHeight / test) + element.pl_orbeccen)
             svg.append("ellipse")
             .attr("cx", vis.config.containerWidth / 2 + 20)
             .attr("cy", vis.config.containerHeight / 2 + 30)
@@ -63,47 +56,6 @@ class Orbit {
             .style("fill", "none")
             .style("stroke", "white");  
             i++;
-        });
-
-
-
-        // svg.append("ellipse")
-        // .attr("cx", 170)
-        // .attr("cy", 100)
-        // .attr("rx", 150)
-        // .attr("ry", 60)
-        // .style("fill", "none")
-        // .style("stroke", "black");  
-        
-        // svg.append("ellipse")
-        // .attr("cx", 200)
-        // .attr("cy", 150)
-        // .attr("rx", 10)
-        // .attr("ry", 10)
-        // .style("fill", "green");
-        
-        // svg.append("ellipse")
-        // .attr("cx", 210)
-        // .attr("cy", 40)
-        // .attr("rx", 10)
-        // .attr("ry", 10)
-        // .style("fill", "blue");
-        
-        // svg.append("ellipse")
-        // .attr("cx", 245)
-        // .attr("cy", 90)
-        // .attr("rx", 10)
-        // .attr("ry", 10)
-        // .style("fill", "red");
-
-        // svg.append("ellipse")
-        // .attr("cx", 170)
-        // .attr("cy", 100)
-        // .attr("rx", 120)
-        // .attr("ry", 50)
-        // .style("fill", "none")
-        // .style("stroke", "black");  
-    
-        
+        });  
     }
 }

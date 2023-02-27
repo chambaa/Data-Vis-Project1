@@ -39,7 +39,7 @@ class BubbleChart {
       vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
       vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
 
-      // append the svg object to the body of the page
+      // append the svg object to the bubbleChart
         vis.svg = d3.select("#bubbleChart")
         .append("svg")
         .attr("width", vis.width + vis.config.margin.left + vis.config.margin.right)
@@ -62,9 +62,7 @@ class BubbleChart {
 
         // Initialize axes
         vis.xAxis = d3.axisBottom(vis.xScale)
-            // .ticks(6)
             .tickSize(-vis.height - 10)
-            // .tickPadding(10)
 
         // Append empty x-axis group and move it to the bottom of the chart
         vis.xAxisG = vis.svg.append('g')
